@@ -1,0 +1,4 @@
+interface:
+  display_name: "Gaven 剧本转视频提示词"
+  short_description: "把定稿剧本转成Seedance 2.5逐镜视频提示词"
+  default_prompt: "使用 $gaven-script-to-video-prompts，根据我已准备好的人物、场景和道具素材，把剧本拆成最长30秒的逐镜视频提示词，只输出最终结果。"

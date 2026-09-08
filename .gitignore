@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+studio/.venv/
+
+# Runtime
+*.log
+studio/server.log
+studio/worker.log
+studio/worker_status.json
+studio/desired_model.json
+studio/graphify-out/
+
+# Local project media (not source)
+projects/
+character_3views*/
+keyframes_*/
+output*/
+output_v5/
+
+# Secrets
+**/credentials.json
+**/.env
+.env.*
+.netrc
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

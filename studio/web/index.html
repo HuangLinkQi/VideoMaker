@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>视频工作室</title>
+<link rel="stylesheet" href="/web/style.css">
+</head>
+<body>
+<header>
+  <h1>🎬 视频工作室</h1>
+  <select id="projectSelect"></select>
+  <button id="newProjectBtn">+ 新项目</button>
+  <nav id="stageNav">
+    <button data-stage="script">1 剧本</button>
+    <button data-stage="assets">2 资产</button>
+    <button data-stage="board">3 分镜</button>
+    <button data-stage="keyframes">4 首尾帧</button>
+    <button data-stage="videos">5 视频</button>
+    <button data-stage="knowledge">📚 知识库</button>
+    <button data-stage="config">⚙️ 配置</button>
+  </nav>
+  <span id="pauseBadge" class="pauseBadge" hidden>⏸ 生成已暂停</span>
+  <span id="workerBadge" class="workerBadge off">🤖 自动执行 离线</span>
+</header>
+<main id="main"><p class="hint">请选择或新建一个项目</p></main>
+<div id="toast"></div>
+<script src="/web/app.js"></script>
+</body>
+</html>

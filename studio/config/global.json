@@ -1,0 +1,84 @@
+{
+  "_说明": "全局记忆：对所有项目生效的模型参数、红线与偏好。agent 生成前必读。修改后立即生效（worker 每次任务注入摘要）。",
+  "updated": "2026-09-04",
+  "image_stack": {
+    "_注": "已验证固化的 Krea-2 Turbo 栈，勿改",
+    "unet": "Krea-2/krea2_turbo_fp8_scaled.safetensors",
+    "clip": "qwen3vl/qwen3vl_4b_fp8_scaled.safetensors",
+    "clip_type": "krea2",
+    "vae": "qwen_image_vae.safetensors",
+    "sampler": {
+      "steps": 8,
+      "cfg": 1.0,
+      "sampler": "euler",
+      "scheduler": "simple",
+      "denoise": 1.0
+    },
+    "negative": "ConditioningZeroOut",
+    "size": [
+      1344,
+      768
+    ],
+    "ref_node": "TextEncodeKrea2Ref（image1-3，最多3张，人物必须正面单视图crop）"
+  },
+  "asset_stack": {
+    "_注": "一个资产一条 ComfyUI 工作流一次出完整设定图。分视单出再拼接已禁用（2026-09-06 整批作废，一致性差）。",
+    "mode": "single_workflow",
+    "model": "krea2_turbo",
+    "gpu_script": "studio/gen_assets.py",
+    "size": [2048, 1152],
+    "disabled_pipeline": "gen_asset_views.py + compose_sheet.py 分阶段拼接"
+  },
+  "video_stack": {
+    "_注": "MiniMax H3 fl2va，参数见根目录 run_h3_fl2va.py 与 生成参数记录.md v5",
+    "node": "MiniMaxH3ImageToVideo",
+    "model": "minimax_h3_fl2va_pruned_int8_convrot",
+    "size": [
+      1344,
+      768
+    ],
+    "steps": 12,
+    "sampler": "res_multistep",
+    "fps": 24,
+    "duration_note": "24fps；8秒=192帧是本机已验证生成长度，不是场次时长。镜头目标帧与请求帧、实际帧、取用帧分开。legacy gen_videos.JOBS 已禁用。"
+  },
+  "voice_stack": {
+    "_注": "路线 B：TTS 先锁声线与台词，FL2VA 仍出无声画面，再把审过的台词轨混进成片。不要走 H3 原生 <Audio N> 克隆。",
+    "mode": "tts_then_mux",
+    "tts": "CosyVoice 2 或 IndexTTS-2（ComfyUI 零样本克隆，中文）",
+    "ref_seconds": [6, 12],
+    "format": "wav 24kHz mono 干声",
+    "calibration_line": "今天天气不错，我们慢慢说。",
+    "lip_sync": "默认只混音；口型不对时 regenerate_video note=对口型，用 LatentSync/MuseTalk 后处理，不重跑 H3",
+    "h3_audio": "FL2VA 继续静音；环境音与人声分离，TTS 人声不得带 BGM/混响"
+  },
+  "rules": {
+    "batch_size": 5,
+    "no_full_run": true,
+    "no_cron_polling": "用户点按钮即触发（agent_worker），不要建定时轮询",
+    "review_after_generate": "每批生成完入库置 review，告知用户去页面审",
+    "no_cjk_in_image_prompt": "prompt 不写中文文字（渲染乱码），广告/屏幕一律 no readable text",
+    "people_constraint": "prompt 开头加人数硬约束 Exactly N people, no duplicates（防三视图参考图致复制体）",
+    "front_crop_only": "参考图只能用正面单视图 crop（char_*_front.png），整张三视图会出复制体（批次1 v1 已翻车，禁用）",
+    "server_cost": "沉鱼云 RTX 5090 按时计费，用完提醒用户关机；SSH 端口/密码会变，以用户最近一次给的为准",
+    "record_params": "每轮参数追加到项目内 生成参数记录.md，须含执行 agent 模型（GET /api/model 或任务头），翻车配置标禁用",
+    "disabled": [
+      "tv7 LoRA 配置",
+      "SDXL/Juggernaut turnaround 路线（仅历史记录）",
+      "分视单出再拼接（gen_asset_views.py + compose_sheet.py，2026-09-06 整批作废）"
+    ]
+  },
+  "retry_defaults": {
+    "max_auto_retries": 2,
+    "on": [
+      "generation_error",
+      "timeout",
+      "quality_rejected"
+    ],
+    "seed_rule": "base = 50000 + batch*1000 + retry*100，同批逐帧 +1",
+    "on_exhaust": "停止并置 regenerate，汇报用户，参数记录标禁用"
+  },
+  "agent_models": [
+    "qwen3.6-plus"
+  ]
+}

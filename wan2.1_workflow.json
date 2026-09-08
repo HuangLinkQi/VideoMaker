@@ -1,0 +1,96 @@
+{
+  "3": {
+    "inputs": {
+      "seed": 42,
+      "steps": 20,
+      "cfg": 6,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "denoise": 1,
+      "model": ["50", 0],
+      "positive": ["52", 0],
+      "negative": ["53", 0]
+    },
+    "class_type": "KSampler",
+    "_meta": {"title": "KSampler"}
+  },
+  "6": {
+    "inputs": {
+      "text": "a cat walking on the beach at sunset, cinematic, smooth motion",
+      "clip": ["50", 1]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {"title": "正向提示词"}
+  },
+  "7": {
+    "inputs": {
+      "text": "blurry, low quality, distorted, jittery",
+      "clip": ["50", 1]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {"title": "负向提示词"}
+  },
+  "8": {
+    "inputs": {
+      "samples": ["3", 0],
+      "vae": ["50", 2]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {"title": "VAE 解码"}
+  },
+  "65": {
+    "inputs": {
+      "frames": ["70", 0],
+      "fps": 24
+    },
+    "class_type": "SaveWEBM",
+    "_meta": {"title": "保存为 WebM 视频"}
+  },
+  "70": {
+    "inputs": {
+      "width": 768,
+      "height": 768,
+      "length": 81,
+      "batch_size": 1,
+      "positive": ["52", 0],
+      "negative": ["53", 0],
+      "vae": ["50", 2],
+      "start_image": ["71", 0]
+    },
+    "class_type": "WanVideoDecode",
+    "_meta": {"title": "Wan 视频解码"}
+  },
+  "50": {
+    "inputs": {
+      "ckpt_name": "wan2.1_t2v_1.3B_bf16.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {"title": "加载 Wan2.1 主模型"}
+  },
+  "52": {
+    "inputs": {
+      "prompt": "a cat walking on the beach at sunset, cinematic, smooth motion, high quality",
+      "negative_prompt": "blurry, low quality, distorted, jittery, watermark",
+      "model_name": "umt5_xxl_fp8_e4m3fn.safetensors"
+    },
+    "class_type": "WanVideoTextEncode",
+    "_meta": {"title": "Wan 文本编码"}
+  },
+  "53": {
+    "inputs": {
+      "prompt": "blurry, low quality, distorted",
+      "negative_prompt": "high quality, sharp",
+      "model_name": "umt5_xxl_fp8_e4m3fn.safetensors"
+    },
+    "class_type": "WanVideoTextEncode",
+    "_meta": {"title": "Wan 负向文本"}
+  },
+  "71": {
+    "inputs": {
+      "noise": 0.0,
+      "seed": 42
+    },
+    "class_type": "WanVideoEmptyLatent",
+    "_meta": {"title": "空潜空间"}
+  }
+}
